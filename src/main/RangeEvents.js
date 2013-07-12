@@ -55,7 +55,12 @@ define(function(require) {
       executeCallback(selection)
     }
 
-    function setInitialSelection() { selection = startDate && endDate ? new DateRange(startDate, endDate) : DateRange.emptyRange() }
+    function setInitialSelection() {
+      selection = startDate && endDate ? new DateRange(startDate, endDate) : DateRange.emptyRange()
+      if (!selection.start && !selection.end) {
+        $('span.separator', container).hide()
+      }
+    }
 
     function initRangeCalendarEvents(container, bodyTable) {
       $('span.rangeLengthLabel', container).text(locale.daysLabel(selection.days()))
@@ -173,7 +178,6 @@ define(function(require) {
     }
 
     function clearRangeClick(event) {
-      console.log("VITTU HALOO!")
       selection = DateRange.emptyRange()
       drawSelection()
       afterSelection()
@@ -234,13 +238,22 @@ define(function(require) {
 
     function setRangeLabels() {
       if(!selection) setInitialSelection()
+
       if(selection.start && selection.end) {
         var format = locale.weekDateFormat
         $('span.startDateLabel', container).text(DateFormat.format(selection.start, format, locale))
         $('span.endDateLabel', container).text(DateFormat.format(selection.end, format, locale))
         $('span.separator', container).show()
+        $('span.startDateLabel', container).closest('.label').show()
         $('span.clearRangeLabel', container).show()
       } else {
+        if (!selection.start) {
+          $('span.startDateLabel', container).text("")
+          $('span.startDateLabel', container).closest('.label').hide()
+        }
+        if (!selection.end) {
+          $('span.endDateLabel', container).text("")
+        }
         $('span.separator', container).hide()
         $('span.clearRangeLabel', container).hide()
       }
