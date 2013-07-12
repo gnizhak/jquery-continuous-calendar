@@ -8,6 +8,7 @@ define(function(require) {
       initEvents          : initEvents,
       addRangeLengthLabel : $.noop,
       addEndDateLabel     : $.noop,
+      addDateClearingLabel: addDateClearingLabel,
       performTrigger      : performTrigger
     }
 
@@ -18,6 +19,15 @@ define(function(require) {
       var selectedDateKey = startDate && DateFormat.format(startDate, 'Ymd', locale)
       if(selectedDateKey in calendarBody.dateCellMap) {
         calendarBody.getDateCell(calendarBody.dateCellMap[selectedDateKey]).addClass('selected')
+      }
+    }
+
+    function addDateClearingLabel() {
+      if(params.allowClearDates) {
+        var dateClearingLabel = $('<span class="clearDates clickable"></span>')
+        dateClearingLabel.text(locale.clearRangeLabel)
+        var dateClearingContainer = $('<div class="label clear"></div>').append(dateClearingLabel)
+        $('.continuousCalendar', container).append(dateClearingContainer)
       }
     }
 
@@ -38,8 +48,16 @@ define(function(require) {
         popupBehavior.close(this)
         executeCallback(selectedDate)
       })
+      $('.clearDates', container).click(clickClearDate)
     }
 
     function setDateLabel(val) { $('span.startDateLabel', container).text(val) }
+
+    function clickClearDate() {
+      $('td.selected', container).removeClass('selected')
+      params.startField.val("")
+      setDateLabel("")
+
+    }
   }
 })
