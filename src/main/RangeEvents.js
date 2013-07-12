@@ -21,6 +21,7 @@ define(function(require) {
       initEvents          : initEvents,
       addRangeLengthLabel : addRangeLengthLabel,
       addEndDateLabel     : addEndDateLabel,
+      addDateClearingLabel: addDateClearingLabel,
       performTrigger      : performTrigger
     }
 
@@ -40,6 +41,15 @@ define(function(require) {
 
     function addEndDateLabel(dateLabelContainer) { dateLabelContainer.append('<span class="separator"> - </span>').append('<span class="endDateLabel"></span>') }
 
+    function addDateClearingLabel() {
+      if(params.allowClearDates) {
+        var dateClearingLabel = $('<span class="clearDates clickable"></span>')
+        dateClearingLabel.text(locale.clearRangeLabel)
+        var dateClearingContainer = $('<div class="label clear"></div>').append(dateClearingLabel)
+        $('.continuousCalendar', container).append(dateClearingContainer)
+      }
+    }
+
     function performTrigger() {
       container.data('calendarRange', selection)
       executeCallback(selection)
@@ -49,6 +59,9 @@ define(function(require) {
 
     function initRangeCalendarEvents(container, bodyTable) {
       $('span.rangeLengthLabel', container).text(locale.daysLabel(selection.days()))
+      if (params.allowClearDates) {
+        $('span.clearDates', container).click(clearRangeClick)
+      }
       bodyTable.addClass(params.selectWeek ? 'weekRange' : 'freeRange')
       bodyTable.mousedown(mouseDown).mouseover(mouseMove).mouseup(mouseUp)
       disableTextSelection(bodyTable.get(0))
@@ -159,6 +172,13 @@ define(function(require) {
       afterSelection()
     }
 
+    function clearRangeClick(event) {
+      console.log("VITTU HALOO!")
+      selection = DateRange.emptyRange()
+      drawSelection()
+      afterSelection()
+    }
+
     function rangeHasDisabledDate() {
       for(var i = 0; i < disabledDatesList.length; i++) {
         if(selection.hasDate(new DateTime(disabledDatesList[i]))) return true
@@ -219,8 +239,10 @@ define(function(require) {
         $('span.startDateLabel', container).text(DateFormat.format(selection.start, format, locale))
         $('span.endDateLabel', container).text(DateFormat.format(selection.end, format, locale))
         $('span.separator', container).show()
+        $('span.clearRangeLabel', container).show()
       } else {
         $('span.separator', container).hide()
+        $('span.clearRangeLabel', container).hide()
       }
     }
 
