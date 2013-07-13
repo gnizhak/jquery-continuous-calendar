@@ -53,11 +53,11 @@ define(function(require) {
 
     function setDateLabel(val) { $('span.startDateLabel', container).text(val) }
 
-    function clickClearDate() {
+    function clickClearDate(e) {
       $('td.selected', container).removeClass('selected')
       params.startField.val("")
       setDateLabel("")
-
+      $(e.target).hide()
     }
   }
 })
