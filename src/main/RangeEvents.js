@@ -194,6 +194,8 @@ define(function(require) {
       selection = DateRange.rangeWithMinimumSize(selection, params.minimumRange, params.disableWeekends, calendarRange)
       drawSelectionBetweenDates(selection)
       $('span.rangeLengthLabel', container).text(locale.daysLabel(selection.days()))
+      var clearDates = $('span.clearDates', container)
+      selection.days() > 0 ? clearDates.show() : clearDates.hide()
     }
 
     function drawSelectionBetweenDates(range) {
