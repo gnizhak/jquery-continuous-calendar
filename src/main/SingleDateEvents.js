@@ -12,7 +12,12 @@ define(function(require) {
       performTrigger      : performTrigger
     }
 
-    function showInitialSelection() { if(startDate) setDateLabel(DateFormat.format(startDate, locale.weekDateFormat, locale)) }
+    function showInitialSelection() {
+      if(startDate) {
+        setDateLabel(DateFormat.format(startDate, locale.weekDateFormat, locale))
+        $('.clearDates', container).show()
+      }
+    }
 
     function initEvents() {
       initSingleDateCalendarEvents()
@@ -24,7 +29,7 @@ define(function(require) {
 
     function addDateClearingLabel() {
       if(params.allowClearDates) {
-        var dateClearingLabel = $('<span class="clearDates clickable"></span>')
+        var dateClearingLabel = $('<span class="clearDates clickable"></span>').hide()
         dateClearingLabel.text(locale.clearDateLabel)
         var dateClearingContainer = $('<div class="label clear"></div>').append(dateClearingLabel)
         $('.continuousCalendar', container).append(dateClearingContainer)
@@ -51,13 +56,18 @@ define(function(require) {
       $('.clearDates', container).click(clickClearDate)
     }
 
-    function setDateLabel(val) { $('span.startDateLabel', container).text(val) }
+    function setDateLabel(val) {
+      if (params.allowClearDates && (val = "")) {
+        $('.clearDates', container).hide()
+      }
+      $('span.startDateLabel', container).text(val)
+      $('.clearDates', container).show()
+    }
 
     function clickClearDate(e) {
       $('td.selected', container).removeClass('selected')
       params.startField.val("")
       setDateLabel("")
-      $(e.target).hide()
     }
   }
 })
