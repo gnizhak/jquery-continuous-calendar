@@ -57,11 +57,14 @@ define(function(require) {
     }
 
     function setDateLabel(val) {
-      if (params.allowClearDates && (val = "")) {
-        $('.clearDates', container).hide()
-      }
       $('span.startDateLabel', container).text(val)
-      $('.clearDates', container).show()
+      if(params.allowClearDates) {
+        if(val == "") {
+          $('.clearDates', container).hide()
+        } else {
+          $('.clearDates', container).show()
+        }
+      }
     }
 
     function clickClearDate(e) {
