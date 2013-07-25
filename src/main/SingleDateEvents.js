@@ -8,16 +8,31 @@ define(function(require) {
       initEvents          : initEvents,
       addRangeLengthLabel : $.noop,
       addEndDateLabel     : $.noop,
+      addDateClearingLabel: addDateClearingLabel,
       performTrigger      : performTrigger
     }
 
-    function showInitialSelection() { if(startDate) setDateLabel(DateFormat.format(startDate, locale.weekDateFormat, locale)) }
+    function showInitialSelection() {
+      if(startDate) {
+        setDateLabel(DateFormat.format(startDate, locale.weekDateFormat, locale))
+        $('.clearDates', container).show()
+      }
+    }
 
     function initEvents() {
       initSingleDateCalendarEvents()
       var selectedDateKey = startDate && DateFormat.format(startDate, 'Ymd', locale)
       if(selectedDateKey in calendarBody.dateCellMap) {
         calendarBody.getDateCell(calendarBody.dateCellMap[selectedDateKey]).addClass('selected')
+      }
+    }
+
+    function addDateClearingLabel() {
+      if(params.allowClearDates) {
+        var dateClearingLabel = $('<span class="clearDates clickable"></span>').hide()
+        dateClearingLabel.text(locale.clearDateLabel)
+        var dateClearingContainer = $('<div class="label clear"></div>').append(dateClearingLabel)
+        $('.continuousCalendar', container).append(dateClearingContainer)
       }
     }
 
@@ -38,8 +53,24 @@ define(function(require) {
         popupBehavior.close(this)
         executeCallback(selectedDate)
       })
+      $('.clearDates', container).click(clickClearDate)
     }
 
-    function setDateLabel(val) { $('span.startDateLabel', container).text(val) }
+    function setDateLabel(val) {
+      $('span.startDateLabel', container).text(val)
+      if(params.allowClearDates) {
+        if(val == "") {
+          $('.clearDates', container).hide()
+        } else {
+          $('.clearDates', container).show()
+        }
+      }
+    }
+
+    function clickClearDate(e) {
+      $('td.selected', container).removeClass('selected')
+      params.startField.val("")
+      setDateLabel("")
+    }
   }
 })
